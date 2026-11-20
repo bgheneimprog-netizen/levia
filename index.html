@@ -342,7 +342,10 @@ ul.clean li::before{content:"";flex:0 0 7px;height:7px;border-radius:50%;backgro
 
 /* ---------- Palco 3D ---------- */
 .stage{position:relative;background:radial-gradient(110% 85% at 50% 38%,#FFFDF9 0%,#F2ECE2 55%,#E4DACB 100%);border-radius:20px;overflow:hidden;color:#16241D;border:1px solid #E4DCCF;height:100%;min-height:300px;isolation:isolate}
-.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab;opacity:0;transition:opacity .7s ease}
+.stage.ready canvas{opacity:1}
+.stage:not(.ready):not(.noimg)::after{content:"";position:absolute;left:50%;top:45%;width:28px;height:28px;margin:-14px;border-radius:50%;border:3px solid rgba(31,77,59,.15);border-top-color:#1F4D3B;animation:stspin 1s linear infinite}
+@keyframes stspin{to{transform:rotate(360deg)}}
 .stage canvas:active{cursor:grabbing}
 .stage-num{position:absolute;left:20px;top:12px;font-family:var(--display);font-weight:800;font-size:96px;line-height:.9;color:#1F4D3B;letter-spacing:-.02em;pointer-events:none;font-variant-numeric:tabular-nums}
 .stage-num small{font-size:26px;color:#8C7D66;opacity:1;letter-spacing:0;margin-left:4px}
@@ -394,6 +397,28 @@ ul.clean li::before{content:"";flex:0 0 7px;height:7px;border-radius:50%;backgro
 .sx-row .rs{font-size:12px;color:var(--muted)}
 .sx-tip{margin-top:12px;font-size:13px;background:var(--surface-2);padding:9px 12px;border-radius:8px;color:var(--ink)}
 @media (max-width:760px){.sx-row{grid-template-columns:minmax(0,1fr) auto}.sx-row .meta{grid-column:1/-1;flex-direction:row;gap:12px;text-align:left}}
+/* Monte seu avatar */
+.av-wrap{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:22px;align-items:start}
+.av-stage{position:sticky;top:calc(env(safe-area-inset-top,0px) + 78px);height:min(700px,calc(100vh - 110px))}
+.av-panel{display:flex;flex-direction:column;gap:14px;min-width:0}
+.av-tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+.av-tabs button{flex:0 0 auto;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 15px;font-weight:700;font-size:13.5px;white-space:nowrap;color:var(--ink)}
+.av-tabs button.on{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.av-sec{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.av-sec h4{font-family:var(--body);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sws{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:38px;height:38px;border-radius:50%;background:var(--c);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line),inset 0 -6px 10px rgba(0,0,0,.12);padding:0;transition:transform .14s ease,box-shadow .14s ease}
+.sw:hover{transform:translateY(-2px) scale(1.06)}
+.sw.on{box-shadow:0 0 0 2.5px var(--brandline),inset 0 -6px 10px rgba(0,0,0,.12);transform:scale(1.06)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chipb{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 13px;font-weight:650;font-size:13.5px;color:var(--ink);transition:border-color .12s,background .12s}
+.chipb:hover{border-color:var(--muted)}
+.chipb.on{border-color:var(--brandline);box-shadow:0 0 0 1px var(--brandline);background:color-mix(in srgb,var(--brandline) 8%,var(--surface))}
+.av-slider{display:grid;grid-template-columns:120px minmax(0,1fr) 40px;align-items:center;gap:12px;font-size:14px;font-weight:600}
+.av-slider input{accent-color:#1F4D3B;width:100%}
+.av-actions{display:flex;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;padding:14px 0 calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--bg) 78%,transparent);z-index:2}
+@media (max-width:900px){.av-wrap{grid-template-columns:minmax(0,1fr)}.av-stage{position:relative;top:0;height:400px}}
+@media (max-width:760px){body.has-tabs .av-actions{bottom:calc(64px + env(safe-area-inset-bottom,0px))}.av-slider{grid-template-columns:96px minmax(0,1fr) 34px}}
 /* Painel de topo das abas (mesma linguagem do palco 3D) */
 .panel{position:relative;border-radius:20px;overflow:hidden;color:#F9F7F2;background-color:#133829;
   background-image:radial-gradient(circle at 104% 135%,transparent 0 33%,rgba(234,220,200,.13) 33% 33.25%,transparent 33.25% 39%,rgba(255,201,40,.55) 39% 39.25%,transparent 39.25% 45%,rgba(234,220,200,.13) 45% 45.25%,transparent 45.25%),linear-gradient(155deg,#1B4A3B 0%,#133829 50%,#0C281E 100%)}
@@ -584,7 +609,7 @@ function emptyProfile(){
     vida:{sono:7, estresse:3, trabalho:'', restricoes:[], nutri:null}
   };
 }
-function defaultState(){ return {profile:null, planStart:null, weights:[], done:{}, gear:{}, days:{}, exams:[], examReq:{}, checkin:{}, race:{}, ai:null, mealPlan:null, updatedAt:0}; }
+function defaultState(){ return {profile:null, planStart:null, weights:[], done:{}, gear:{}, days:{}, exams:[], examReq:{}, checkin:{}, race:{}, ai:null, mealPlan:null, avatar:null, updatedAt:0}; }
 function normalize(s){
   try{ s = s && typeof s==='object' ? JSON.parse(JSON.stringify(s)) : s; }catch(e){}
   const d = defaultState();
@@ -1559,7 +1584,8 @@ function finishWizard(){
   state.done = {}; state.ai=null; PLAN=null; selWeek=null;
   if(!state.weights.length || (prev && prev.peso!==draft.peso)) state.weights.push({d:iso(TODAY), kg:+draft.peso});
   draft=null; try{ localStorage.removeItem(LS_DRAFT); }catch(e){}
-  location.hash='perfil'; commit();
+  avFirst=true; avReturn='perfil'; avDraft=null; avTab='corpo';
+  location.hash='avatar'; commit();
 }
 
 /* =====================================================================
@@ -1713,7 +1739,7 @@ function viewCorpo(){
     <div class="dx-grid">
       <div class="dx-stage" id="stage-slot"></div>
       <div class="card" style="display:flex;flex-direction:column;gap:14px">
-        <div class="label">Seu avatar</div>
+        <div class="row" style="justify-content:space-between;align-items:center"><div class="label">Seu avatar</div><button type="button" class="btn sm" data-avopen="corpo">Editar visual</button></div>
         <h2>${{inicio:'Como você começou',agora:'Como você está agora',meta:'Onde você quer chegar'}[avatarView]}</h2>
         <div class="seg" role="tablist" aria-label="Momento do avatar">${[['inicio','Início'],['agora','Agora'],['meta','Meta']].map(([k,l])=>`<button type="button" class="${avatarView===k?'on':''}" data-avatar="${k}" aria-pressed="${avatarView===k}">${l}</button>`).join('')}</div>
         <p class="small muted">O boneco tem a sua altura e o peso de cada momento. A cada peso menor que você registra e a cada treino concluído, ele afina e ganha definição: ombros, peitoral e, perto da meta, o abdômen.</p>
@@ -1832,6 +1858,7 @@ function viewPerfil(){
       <div class="card"><div class="card-h"><h3>Como montamos seu plano</h3></div>
         <div class="bib-strip" style="margin:0 0 14px">${['base','build','spec','taper'].filter(k=>counts[k]).map(k=>`<div class="ph-${k}" style="flex:${counts[k]};color:var(--ink)">${PH_N[k].toUpperCase()} ${counts[k]}</div>`).join('')}</div>
         <ul class="clean">${dx.adjust.map(a=>`<li>${a}</li>`).join('')||'<li>Plano padrão para o seu nível, com recuperação a cada 4 semanas.</li>'}<li>Uma semana mais leve a cada 4, e ${d.taper?`${d.taper} semana${d.taper>1?'s':''} de polimento antes da prova`:'progressão contínua'}.</li></ul></div>
+    <div class="callout"><p><b>Seu avatar.</b> Mude cabelo, pele, corpo, roupa e acessórios quando quiser.</p><button type="button" class="btn sm primary" data-avopen="perfil">${state.avatar?'Editar avatar':'Montar avatar'}</button></div>
     <div class="card"><div class="card-h"><h3>Sua conta e seus dados</h3></div>
       ${userCol?`<p>Seus dados estão salvos na conta <b>${esc(accountEmail||'Claude conectada')}</b>. Entre com esse e-mail em qualquer aparelho e tudo aparece: plano, treinos feitos, peso, exames, plano alimentar e fotos.</p><p class="small muted" style="margin-top:6px">Ficam numa área privada da sua conta: nem quem criou o app consegue ver.</p>`:`<p>Seus dados ficam salvos neste navegador, só para você.</p><p class="small muted" style="margin-top:6px">${window.claude?'Para salvar no seu e-mail e ver em qualquer aparelho, abra o app logado na sua conta Claude.':'Use sempre o mesmo aparelho e navegador. Limpar os dados do navegador apaga o seu progresso.'}</p>`}
     </div>
@@ -1859,6 +1886,95 @@ Resumo do plano gerado (JSON): ${JSON.stringify(resumo)}`;
 }
 
 /* =====================================================================
+   AVATAR: catálogo, padrão e tela "Monte seu avatar"
+   ===================================================================== */
+const SKINS=['#F7DCC9','#EEC6A8','#E3B08D','#D29C74','#BC845C','#A06B47','#83533A','#66402D','#4B2E21','#331F17'];
+const HAIR_COLORS=[['#1B1512','Preto'],['#3B2418','Castanho escuro'],['#6A4128','Castanho'],['#A4703F','Mel'],['#D9B36C','Loiro'],['#EDE3CF','Platinado'],['#A3462A','Ruivo'],['#9A9893','Grisalho'],['#E58FB0','Rosa'],['#4E7BD9','Azul'],['#3FA27A','Verde'],['#8A5CF6','Roxo']];
+const HAIR_STYLES=[['curto','Curto'],['raspado','Raspado'],['cacheado','Cacheado'],['afro','Black power'],['rabo','Rabo de cavalo'],['coque','Coque'],['longo','Longo'],['trancas','Tranças'],['careca','Careca']];
+const EYE_COLORS=[['#5A3A22','Castanho'],['#A0712F','Mel'],['#4E7D4A','Verde'],['#4A78B5','Azul'],['#8A9399','Cinza'],['#1A1414','Preto']];
+const CLOTH_COLORS=[['#1F4D3B','Verde levia'],['#0F2A21','Verde-floresta'],['#FFC928','Amarelo'],['#8B5CF6','Violeta'],['#06B6D4','Ciano'],['#FF6B5A','Coral'],['#F28CB1','Rosa'],['#D83A3A','Vermelho'],['#FF8A3D','Laranja'],['#1E2A4A','Marinho'],['#16191C','Preto'],['#F4F1EA','Branco'],['#9AA3A0','Cinza'],['#EADCC8','Areia']];
+const TOPS=[['nenhum','Sem'],['top','Top'],['regata','Regata'],['camiseta','Camiseta'],['cropped','Cropped'],['mangalonga','Manga longa']];
+const BOTTOMS=[['corrida','Short de corrida'],['short','Short'],['bermuda','Bermuda'],['legging','Legging'],['saia','Saia']];
+const SHOE_STYLES=[['tenis','Tênis'],['cano','Cano alto']];
+const BEARDS=[['nenhuma','Nenhuma'],['curta','Curta'],['cheia','Cheia'],['bigode','Bigode']];
+const ACCS=[['bone','Boné'],['viseira','Viseira'],['faixa','Faixa'],['oculos','Óculos'],['relogio','Relógio']];
+const AV_POSES=[['idle','Parado'],['run','Correndo'],['bike','Pedalando'],['swim','Nadando'],['court','Quadra'],['hyrox','HYROX']];
+function AVATAR_DEFAULT(sex){
+  const f = sex!=='m';
+  return { sex: f?'f':'m', skin:2, eyes:'#5A3A22',
+    hair: f? {style:'rabo', color:'#3B2418', tie:'#FFC928'} : {style:'curto', color:'#1B1512', tie:'#FFC928'},
+    beard:'nenhuma',
+    top: f? {style:'top', color:'#1F4D3B'} : {style:'regata', color:'#1F4D3B'},
+    bottom: f? {style:'legging', color:'#16191C'} : {style:'corrida', color:'#16191C'},
+    shoes:{style:'tenis', color:'#F4F1EA', sole:'#FFC928'},
+    acc:{relogio:true, cor:'#1F4D3B'},
+    body:{busto:.5, barriga:.5, quadril:.5, musculo:.5} };
+}
+const avSex = P => (state.avatar && state.avatar.sex) || (P && P.sexo==='m' ? 'm' : P && P.sexo==='f' ? 'f' : 'f');
+let avDraft=null, avTab='corpo', avPose='idle', avReturn='perfil', avFirst=false;
+function currentLook(){
+  if(route==='avatar' && avDraft) return avDraft;
+  if(route==='diagnostico' && draft) return draft.sexo? AVATAR_DEFAULT(draft.sexo==='m'?'m':'f') : null;
+  if(state.profile) return state.avatar || AVATAR_DEFAULT(state.profile.sexo==='m'?'m':'f');
+  return null;
+}
+function openAvatar(ret){ avDraft=JSON.parse(JSON.stringify(state.avatar || AVATAR_DEFAULT(avSex(state.profile)))); avReturn=ret||route||'perfil'; location.hash='avatar'; }
+function randomAvatar(sex){
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  const f = sex? sex!=='m' : Math.random()<.5;
+  const hs = f? pick(['rabo','coque','longo','trancas','cacheado','afro','curto']) : pick(['curto','raspado','cacheado','afro','careca','curto']);
+  const pal=CLOTH_COLORS.map(c=>c[0]);
+  return { sex:f?'f':'m', skin:Math.floor(Math.random()*SKINS.length), eyes:pick(EYE_COLORS)[0],
+    hair:{style:hs, color:pick(HAIR_COLORS.slice(0, Math.random()<.8?8:12))[0], tie:pick(pal)},
+    beard: f? 'nenhuma' : pick(['nenhuma','nenhuma','curta','cheia','bigode']),
+    top:{style: f? pick(['top','regata','camiseta','cropped']) : pick(['regata','camiseta','nenhum','mangalonga']), color:pick(pal)},
+    bottom:{style: f? pick(['legging','short','corrida','saia']) : pick(['corrida','short','bermuda','legging']), color:pick(pal)},
+    shoes:{style:pick(['tenis','tenis','cano']), color:pick(['#F4F1EA','#16191C','#FFC928','#06B6D4','#FF6B5A','#8B5CF6']), sole:pick(['#F4F1EA','#16191C','#FFC928'])},
+    acc:{ bone:Math.random()<.2, viseira:false, faixa:Math.random()<.15, oculos:Math.random()<.25, relogio:Math.random()<.6, cor:pick(pal)},
+    body:{busto:.35+Math.random()*.3, barriga:.4+Math.random()*.2, quadril:.35+Math.random()*.3, musculo:.4+Math.random()*.3} };
+}
+function stageAvatar(){
+  const P=state.profile, A=avDraft;
+  const face = ['cabelo','rosto','acess'].includes(avTab) && avPose==='idle';
+  return {modes:[avPose], injuries:[], zoom: face?'face':true, body:{cm:P.altura, kg:currentKg(), prog:progFrac(), sex:A.sex},
+    num:'', tag:`Seu avatar<br>${P.altura} cm · ${nf(currentKg())} kg`, read:[]};
+}
+function viewAvatar(){
+  if(!state.profile) return viewLanding();
+  if(!avDraft) avDraft=JSON.parse(JSON.stringify(state.avatar || AVATAR_DEFAULT(avSex(state.profile))));
+  const A=avDraft, acc=A.acc||{};
+  const sw=(path,val,cur,color,label)=>`<button type="button" class="sw ${String(cur)===String(val)?'on':''}" style="--c:${color}" data-av="${path}" data-v="${esc(val)}" aria-pressed="${String(cur)===String(val)}" aria-label="${esc(label)}" title="${esc(label)}"></button>`;
+  const ch=(path,val,cur,label)=>`<button type="button" class="chipb ${cur===val?'on':''}" data-av="${path}" data-v="${esc(val)}" aria-pressed="${cur===val}">${esc(label)}</button>`;
+  const sl=(path,label,val,lo,hi)=>`<div class="av-slider"><label for="avr-${path}">${label}</label><input id="avr-${path}" type="range" min="0" max="100" value="${Math.round((val??.5)*100)}" data-avr="${path}"><span class="small muted">${lo} · ${hi}</span></div>`;
+  const tabs=[['corpo','Corpo'],['pele','Pele'],['cabelo','Cabelo'],['rosto','Rosto'],['roupa','Roupa'],['acess','Acessórios']];
+  let body='';
+  if(avTab==='corpo') body=`<div class="av-sec"><h4>Tipo de corpo</h4><div class="chips">${ch('sex','f',A.sex,'Feminino')}${ch('sex','m',A.sex,'Masculino')}</div></div>
+    <div class="av-sec"><h4>Formas</h4>${sl('body.busto',A.sex==='f'?'Busto':'Peitoral',A.body.busto,'−','+')}${sl('body.barriga','Barriga',A.body.barriga,'−','+')}${sl('body.quadril','Quadril e glúteo',A.body.quadril,'−','+')}${sl('body.musculo','Músculo',A.body.musculo,'−','+')}
+    <p class="small muted">Altura e peso vêm do seu perfil: quando você registra um peso novo, o avatar emagrece junto.</p></div>`;
+  if(avTab==='pele') body=`<div class="av-sec"><h4>Tom de pele</h4><div class="sws">${SKINS.map((c,i)=>sw('skin',i,A.skin,c,'Tom '+(i+1))).join('')}</div></div>`;
+  if(avTab==='cabelo') body=`<div class="av-sec"><h4>Estilo</h4><div class="chips">${HAIR_STYLES.map(([k,l])=>ch('hair.style',k,A.hair.style,l)).join('')}</div></div>
+    <div class="av-sec"><h4>Cor do cabelo</h4><div class="sws">${HAIR_COLORS.map(([c,l])=>sw('hair.color',c,A.hair.color,c,l)).join('')}</div></div>
+    ${A.hair.style==='rabo'?`<div class="av-sec"><h4>Elástico</h4><div class="sws">${CLOTH_COLORS.map(([c,l])=>sw('hair.tie',c,A.hair.tie,c,l)).join('')}</div></div>`:''}`;
+  if(avTab==='rosto') body=`<div class="av-sec"><h4>Cor dos olhos</h4><div class="sws">${EYE_COLORS.map(([c,l])=>sw('eyes',c,A.eyes,c,l)).join('')}</div></div>
+    <div class="av-sec"><h4>Barba</h4><div class="chips">${BEARDS.map(([k,l])=>ch('beard',k,A.beard,l)).join('')}</div></div>`;
+  if(avTab==='roupa') body=`<div class="av-sec"><h4>Parte de cima</h4><div class="chips">${TOPS.map(([k,l])=>ch('top.style',k,A.top.style,l)).join('')}</div>${A.top.style!=='nenhum'?`<div class="sws">${CLOTH_COLORS.map(([c,l])=>sw('top.color',c,A.top.color,c,l)).join('')}</div>`:''}</div>
+    <div class="av-sec"><h4>Parte de baixo</h4><div class="chips">${BOTTOMS.map(([k,l])=>ch('bottom.style',k,A.bottom.style,l)).join('')}</div><div class="sws">${CLOTH_COLORS.map(([c,l])=>sw('bottom.color',c,A.bottom.color,c,l)).join('')}</div></div>
+    <div class="av-sec"><h4>Tênis</h4><div class="chips">${SHOE_STYLES.map(([k,l])=>ch('shoes.style',k,A.shoes.style,l)).join('')}</div><div class="sws">${CLOTH_COLORS.map(([c,l])=>sw('shoes.color',c,A.shoes.color,c,l)).join('')}</div><h4 style="margin-top:4px">Sola</h4><div class="sws">${[['#F4F1EA','Branca'],['#16191C','Preta'],['#FFC928','Amarela'],['#EADCC8','Areia']].map(([c,l])=>sw('shoes.sole',c,A.shoes.sole,c,l)).join('')}</div></div>`;
+  if(avTab==='acess') body=`<div class="av-sec"><h4>Acessórios</h4><div class="chips">${ACCS.map(([k,l])=>`<button type="button" class="chipb ${acc[k]?'on':''}" data-avt="acc.${k}" aria-pressed="${!!acc[k]}">${l}</button>`).join('')}</div>
+    <h4 style="margin-top:4px">Cor do boné, viseira e faixa</h4><div class="sws">${CLOTH_COLORS.map(([c,l])=>sw('acc.cor',c,acc.cor,c,l)).join('')}</div></div>`;
+  return `<div class="av-wrap">
+    <div class="av-stage" id="stage-slot"></div>
+    <div class="av-panel">
+      <div>${avFirst?'<div class="label">Último passo</div>':'<div class="label">Seu avatar</div>'}<h2 style="font-size:clamp(30px,5vw,42px)">${avFirst?'Agora, monte o seu avatar':'Deixe do seu jeito'}</h2>
+        <p class="small muted" style="margin-top:6px">Ele treina com você em todas as telas e muda de forma conforme você evolui. Gire arrastando.</p></div>
+      <div class="av-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" class="${avTab===k?'on':''}" data-avtab="${k}" role="tab" aria-selected="${avTab===k}">${l}</button>`).join('')}</div>
+      ${body}
+      <div class="av-sec"><h4>Ver em ação</h4><div class="chips">${AV_POSES.map(([k,l])=>`<button type="button" class="chipb ${avPose===k?'on':''}" data-avpose="${k}">${l}</button>`).join('')}</div></div>
+      <div class="av-actions"><button type="button" class="btn" data-avrand="1">Surpreenda-me</button>${state.avatar&&!avFirst?'<button type="button" class="btn" data-avcancel="1">Cancelar</button>':''}<button type="button" class="btn go" data-avsave="1" style="margin-left:auto">${avFirst?'Salvar e ver meu plano':'Salvar avatar'}</button></div>
+    </div></div>`;
+}
+
+/* =====================================================================
    PALCO 3D — atleta articulado que faz o movimento do esporte escolhido
    ===================================================================== */
 const STAGE = (()=>{
@@ -1870,6 +1986,7 @@ const STAGE = (()=>{
   const ok = typeof THREE !== 'undefined';
   if(!ok) wrap.classList.add('noimg');
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ready=false;
   let bodyT={k:1,f:.12,d:.5,s:0,w:.5,mu:.65}, bodyC={k:1,f:.12,d:.5,s:0,w:.5,mu:.65}, altSex=false, zoomed=false, firstBody=true;
   let R=null, raf=0, last=0, t=0, modes=['idle'], modeIdx=0, modeT=0, curMode='idle', pop=1, injuries=[], drag=0, dragging=false, lastX=0, spin=0;
   const ACC = {run:0xFFC928, walk:0xFFC928, idle:0xFFC928, gym:0xFFC928, hyrox:0xFFC928, bike:0x8B5CF6, swim:0x06B6D4, court:0xC9A878};
@@ -2001,7 +2118,7 @@ const STAGE = (()=>{
     const target = new THREE.Mesh(new THREE.TorusGeometry(.2,.015,8,40), new THREE.MeshBasicMaterial({color:0xFFC928})); target.position.set(0,2.25,.55); root.add(target);
     R = {renderer, scene, camera, root, hips, torso, neck, sh, el, wr, hp, kn, an, bike, wheels, crank, racket, ball, target, water, markers, trunkLo, trunkUp, limbs, joints, nk, head, jaw, hairShort, hairLong, bun, built:null};
     R.proc=[trunkLo,trunkUp,nk,head,jaw,hairShort,hairLong,bun].concat(limbs.map(l=>l.o), joints.map(j=>j.o), procExtra);
-    linearize(scene); rebuildBody(); applyTint(); loadMH();
+    linearize(scene); rebuildBody(); applyTint(); loadMH(); setTimeout(()=>{ if(!ready){ ready=true; wrap.classList.add('ready'); } }, 6000);
   }
 
   // f = gordura (0 no IMC 21, 1 no IMC 40); d = definição (IMC mais baixo + treinos feitos); k = altura; s = sexo
@@ -2030,6 +2147,7 @@ const STAGE = (()=>{
   const dec=(b,T)=>{ const bin=atob(b); const u8=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i); return new T(u8.buffer); };
   function loadMH(){ if(!window.fetch) return; fetch('levia-body.json').then(r=>r.ok?r.json():null).then(d=>{ if(d && R) initMH(d); }).catch(()=>{}); }
   function mhWeights(B){
+    const Lb=(LOOK&&LOOK.body)||{}; B=Object.assign({},B,{mu:clamp(B.mu+((Lb.musculo??.5)-.5)*.7,.1,1)});
     const w=new Float32Array(20); w[0]=B.s; w[1]=1-B.s;
     const tri=v=> v<.5? [1-2*v, 2*v, 0] : [0, 2-2*v, 2*v-1];
     const M=tri(B.mu), Wt=tri(B.w); let k=2;
@@ -2063,8 +2181,22 @@ const STAGE = (()=>{
     const tie=new THREE.Mesh(new THREE.TorusGeometry(.024,.007,8,20), new THREE.MeshStandardMaterial({color:0xFFC928, roughness:.4})); tail.add(tie);
     cap.visible=false; bun.visible=false;
     MH={n, base, targets, joints:d.joints, mesh, geo, bones, skeleton:new THREE.Skeleton(bones), dom, eyes, cap, bun, shell, tail, tailMesh, tie, built:null, fem:null};
-    const cloth=(hex,rough)=>{ const mm=new THREE.SkinnedMesh(new THREE.BufferGeometry(), new THREE.MeshStandardMaterial({color:hex, skinning:true, roughness:rough, metalness:0})); mm.castShadow=true; mm.frustumCulled=false; r.root.add(mm); return mm; };
-    MH.shorts=cloth(0x1F4D3B,.8); MH.top=cloth(0x1F4D3B,.8); MH.shoes=cloth(0xF4F1EA,.55); MH.sole=null;
+    const cloth=(rough)=>{ const mm=new THREE.SkinnedMesh(new THREE.BufferGeometry(), new THREE.MeshStandardMaterial({color:0xffffff, skinning:true, roughness:rough, metalness:0})); mm.castShadow=true; mm.frustumCulled=false; r.root.add(mm); return mm; };
+    MH.bottom=cloth(.8); MH.top=cloth(.8); MH.shoes=cloth(.5); MH.sole=cloth(.6);
+    const skirt=new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshStandardMaterial({color:0xffffff, roughness:.8, side:THREE.DoubleSide})); skirt.castShadow=true; r.hips.add(skirt); MH.skirt=skirt;
+    MH.hairMat=hairMat; hairMat.side=THREE.DoubleSide; hairMat.roughness=.55;
+    const onNeck=(geo,mat)=>{ const o=new THREE.Mesh(geo||new THREE.BufferGeometry(), mat); o.castShadow=true; r.neck.add(o); return o; };
+    MH.bun2=onNeck(new THREE.SphereGeometry(1,24,18),hairMat); MH.curtain=onNeck(null,hairMat); MH.braids=[onNeck(null,hairMat),onNeck(null,hairMat)];
+    MH.brows=[0,1].map(()=>onNeck(null,new THREE.MeshStandardMaterial({color:0x2A1C15, roughness:.8})));
+    MH.beard=onNeck(null,new THREE.MeshStandardMaterial({color:0x2A1C15, roughness:.85}));
+    const accM=()=>new THREE.MeshStandardMaterial({color:0x1F4D3B, roughness:.6});
+    const brimGeo=()=>new THREE.CylinderGeometry(.46,.5,.07,40,1,false,-Math.PI/2,Math.PI);
+    const capG=new THREE.Group(); const dome=new THREE.Mesh(new THREE.SphereGeometry(1,36,18,0,Math.PI*2,0,Math.PI/2), accM()); const brim=new THREE.Mesh(brimGeo(), accM()); brim.position.set(0,.03,.88); brim.rotation.x=.1; capG.add(dome,brim); capG.traverse(o=>{if(o.isMesh)o.castShadow=true;}); r.neck.add(capG); MH.cap=capG;
+    const visor=new THREE.Group(); const vg=new THREE.TorusGeometry(1,.06,8,48); vg.rotateX(Math.PI/2); visor.add(new THREE.Mesh(vg,accM())); const vb=new THREE.Mesh(brimGeo(),accM()); vb.position.set(0,.02,.9); vb.rotation.x=.1; visor.add(vb); r.neck.add(visor); MH.visor=visor;
+    const bg=new THREE.TorusGeometry(1,.11,10,48); bg.rotateX(Math.PI/2); MH.band=onNeck(bg,accM());
+    const gg=new THREE.TorusGeometry(1,.085,10,48,2.3); gg.rotateZ(Math.PI/2-1.15); gg.rotateX(Math.PI/2); MH.glasses=onNeck(gg,new THREE.MeshStandardMaterial({color:0x1A2026, roughness:.15, metalness:.6}));
+    const watch=new THREE.Group(); const wg=new THREE.TorusGeometry(.03,.008,8,28); wg.rotateX(Math.PI/2); watch.add(new THREE.Mesh(wg,new THREE.MeshStandardMaterial({color:0x14181B,roughness:.5}))); const face=new THREE.Mesh(new THREE.BoxGeometry(.03,.006,.03),new THREE.MeshStandardMaterial({color:0x0D1012,roughness:.2,metalness:.4})); face.position.set(0,0,.036); watch.add(face); watch.position.set(0,-.035,0); r.wr[0].add(watch); MH.watch=watch;
+    MH.eyes.forEach(gr=>{ const pu=new THREE.Mesh(new THREE.SphereGeometry(.0032,10,8),new THREE.MeshStandardMaterial({color:0x0A0807,roughness:.2})); pu.position.z=.0122; gr.add(pu); const hl=new THREE.Mesh(new THREE.SphereGeometry(.0013,8,6),new THREE.MeshBasicMaterial({color:0xFFFFFF})); hl.position.set(.002,.002,.0126); gr.add(hl); });
     linearize(r.root);
     r.proc.forEach(o=>o.visible=false);
     r.built=null; rebuildBody();
@@ -2103,6 +2235,150 @@ const STAGE = (()=>{
     m.tailMesh.geometry.dispose(); m.tailMesh.geometry=tg;
     m.tie.position.set(0,-.004,-.006); m.tie.rotation.x=Math.PI/2-.7;
   }
+  // ================= VISUAL DO AVATAR (cabelo, rosto, roupas, acessórios, corpo) =================
+  let LOOK = null, lookKey = '';
+  const hexLin = h => new THREE.Color(h).convertSRGBToLinear();
+  const clothMat = () => new THREE.MeshStandardMaterial({color:0xffffff, skinning:true, roughness:.78, metalness:0});
+  function lookOf(){ return LOOK || AVATAR_DEFAULT(bodyC.s>=.5?'f':'m'); }
+  // malha "casca" a partir de vértices do corpo (para roupas, cabelo e barba)
+  function shellGeo(cond, offFn, skinned){
+    const m=MH, P=m.geo.attributes.position.array, N=m.geo.attributes.normal.array, IDX=m.geo.index.array, SI=m.geo.attributes.skinIndex.array, SW=m.geo.attributes.skinWeight.array;
+    const map=new Int32Array(m.n).fill(-1), pos=[], si=[], sw=[], ind=[];
+    for(let t=0;t<IDX.length;t+=3){ const a=IDX[t],b=IDX[t+1],c=IDX[t+2]; if(!(cond(a)&&cond(b)&&cond(c))) continue;
+      for(const v of [a,b,c]) if(map[v]<0){ map[v]=pos.length/3; const o=offFn(v); const sh=skinned||{x:0,y:0,z:0};
+        pos.push(P[v*3]+N[v*3]*o - sh.x, P[v*3+1]+N[v*3+1]*o - sh.y, P[v*3+2]+N[v*3+2]*o - sh.z);
+        if(!skinned){ for(let q=0;q<4;q++){ si.push(SI[v*4+q]); sw.push(SW[v*4+q]); } } }
+      ind.push(map[a],map[b],map[c]); }
+    const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    if(!skinned){ g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(si,4)); g.setAttribute('skinWeight',new THREE.Float32BufferAttribute(sw,4)); }
+    g.setIndex(ind); g.computeVertexNormals(); return g; }
+  function setGeo(mesh,g){ if(mesh.geometry) mesh.geometry.dispose(); mesh.geometry=g; }
+  function tube(points, radFn, TS=28, RS=14, zs=.85){
+    const curve=new THREE.CatmullRomCurve3(points), tg=new THREE.TubeGeometry(curve,TS,1,RS,false), tp=tg.attributes.position.array;
+    for(let i=0;i<=TS;i++){ const u=i/TS, c=curve.getPointAt(u), rad=radFn(u); for(let j=0;j<=RS;j++){ const k=(i*(RS+1)+j)*3; tp[k]=c.x+(tp[k]-c.x)*rad; tp[k+1]=c.y+(tp[k+1]-c.y)*rad; tp[k+2]=c.z+(tp[k+2]-c.z)*rad*zs; } }
+    tg.attributes.position.needsUpdate=true; tg.computeVertexNormals(); return tg; }
+  const noise3=(x,y,z)=>Math.sin(x*91.7)*Math.sin(y*83.3+1.3)*Math.sin(z*97.1+2.1);
+  // deformações do corpo: busto, barriga, quadril/glúteo
+  function deformBody(J,L){
+    const m=MH, p=m.geo.attributes.position.array, b=L.body||{};
+    const busto=((b.busto??.5)-.5)*2, barriga=((b.barriga??.5)-.5)*2, quadril=((b.quadril??.5)-.5)*2;
+    if(!busto && !barriga && !quadril) return;
+    const shY=(J.shL.y+J.shR.y)/2, hipY=(J.hipL.y+J.hipR.y)/2, sz=J.spine.z, cx=Math.abs(J.shL.x)*.5, cy=shY-.13;
+    const fem = bodyC.s>=.5;
+    for(let v=0;v<m.n;v++){ const d=m.dom[v]; if(d!==0 && d!==1 && d!==9 && d!==12) continue;
+      const i=v*3, x=p[i], y=p[i+1], z=p[i+2]; let dx=0,dy=0,dz=0;
+      if(d===1||d===0){
+        if(busto && z>sz){ const g=Math.exp(-((Math.abs(x)-cx)**2+(y-cy)**2)/(2*.048*.048)); dz+=busto*(fem?.038:.016)*g; dy-=busto*(fem?.01:0)*g; }
+        if(barriga){ const g=Math.exp(-(x*x)/(2*.1*.1)-((y-(hipY+.13))**2)/(2*.085*.085)); const ax=x, az=z-sz, l=Math.hypot(ax,az)||1; const k=barriga*.055*g*(az>-.02?1:.25); dx+=ax/l*k*.6; dz+=az/l*k; }
+      }
+      if(quadril){ const gb=Math.exp(-((Math.abs(x)-.065)**2)/(2*.06*.06)-((y-(hipY-.035))**2)/(2*.06*.06)); if(z<sz) dz-=quadril*.03*gb;
+        const gs=Math.exp(-((y-(hipY-.02))**2)/(2*.07*.07)); dx+=Math.sign(x)*quadril*.018*gs*Math.min(1,Math.abs(x)/.1); }
+      p[i]+=dx; p[i+1]+=dy; p[i+2]+=dz; }
+  }
+  function buildLook(J){
+    const m=MH, r=R, L=lookOf(), P=m.geo.attributes.position.array;
+    const hipY=(J.hipL.y+J.hipR.y)/2, kneeY=(J.kneeL.y+J.kneeR.y)/2, shY=(J.shL.y+J.shR.y)/2, ankY=(J.ankleL.y+J.ankleR.y)/2, elY=(J.elL.y+J.elR.y)/2, nkY=J.neck.y;
+    m.mesh.material.color.copy(hexLin(SKINS[L.skin]||SKINS[2]));
+    const dom=v=>m.dom[v], Y=v=>P[v*3+1];
+    // ----- parte de cima
+    const torso=v=>{ const d=dom(v); return (d===0||d===1) && Y(v)>hipY+.035 && Y(v)<nkY-.03; };
+    const tops={
+      nenhum:null,
+      top:v=>{ const d=dom(v), y=Y(v); return (d===0||d===1) && y>shY-.25 && y<shY-.035; },
+      regata:torso,
+      cropped:v=>torso(v) && Y(v)>hipY+.17,
+      camiseta:v=>torso(v) || ((dom(v)===3||dom(v)===6) && Y(v)>elY+.5*(shY-elY)),
+      mangalonga:v=>torso(v) || [3,4,6,7].includes(dom(v))
+    };
+    const tc=tops[L.top.style]; m.top.visible=!!tc;
+    if(tc){ setGeo(m.top, shellGeo(tc, ()=>L.top.style==='mangalonga'?.006:.0045)); m.top.material.color.copy(hexLin(L.top.color)); }
+    // ----- parte de baixo
+    const shortC=v=>{ const d=dom(v), y=Y(v); return (d===0 && y<hipY+.09) || ((d===9||d===12) && y>kneeY+.52*(hipY-kneeY)); };
+    const bottoms={
+      corrida:v=>{ const d=dom(v), y=Y(v); return (d===0 && y<hipY+.08) || ((d===9||d===12) && y>kneeY+.72*(hipY-kneeY)); },
+      short:shortC,
+      bermuda:v=>{ const d=dom(v), y=Y(v); return (d===0 && y<hipY+.09) || ((d===9||d===12) && y>kneeY+.06); },
+      legging:v=>{ const d=dom(v), y=Y(v); return (d===0 && y<hipY+.1) || d===9 || d===12 || ((d===10||d===13) && y>ankY+.05); },
+      saia:v=>{ const d=dom(v), y=Y(v); return (d===0 && y<hipY+.08) || ((d===9||d===12) && y>kneeY+.8*(hipY-kneeY)); }
+    };
+    setGeo(m.bottom, shellGeo(bottoms[L.bottom.style]||shortC, ()=>L.bottom.style==='legging'?.0035:.005)); m.bottom.material.color.copy(hexLin(L.bottom.color));
+    m.skirt.visible = L.bottom.style==='saia';
+    if(m.skirt.visible){ const hw=Math.abs(J.hipL.x)*1.95; m.skirt.geometry.dispose(); m.skirt.geometry=new THREE.CylinderGeometry(hw*1.02,hw*1.55,.2,40,1,true); m.skirt.position.set(0,-.07,.005); m.skirt.material.color.copy(hexLin(L.bottom.color)); }
+    // ----- tênis e sola
+    const cano = L.shoes.style==='cano';
+    setGeo(m.shoes, shellGeo(v=>{ const d=dom(v), y=Y(v); return ((d===11||d===14) && y<ankY+(cano?.07:.025)) || (cano && (d===10||d===13) && y<ankY+.07); }, ()=>.005)); m.shoes.material.color.copy(hexLin(L.shoes.color));
+    setGeo(m.sole, shellGeo(v=>{ const d=dom(v); return (d===11||d===14) && Y(v)<.022; }, ()=>.0075)); m.sole.material.color.copy(hexLin(L.shoes.sole||'#F4F1EA'));
+    // ----- cabelo
+    buildHairStyle(J,L);
+    // ----- rosto: olhos, sobrancelhas, barba
+    m.eyes.forEach(e=>e.children[1].material.color.copy(hexLin(L.eyes||'#5A3A22')));
+    const browC=hexLin(shade(L.hair.color,-.25));
+    const eyeY=(J.eyeL.y+J.eyeR.y)/2, faceZ=(J.eyeL.z+J.eyeR.z)/2;
+    [J.eyeL,J.eyeR].forEach((e,i)=>{ const s=i===0?1:-1, b=m.brows[i]; const o=e.clone().sub(J.neck);
+      const pts=[new THREE.Vector3(o.x-s*.017,o.y+.016,o.z+.006),new THREE.Vector3(o.x,o.y+.022,o.z+.009),new THREE.Vector3(o.x+s*.019,o.y+.018,o.z+.002)];
+      b.geometry.dispose(); b.geometry=tube(pts,u=>.0019*(1-.5*u)+.0005,10,6,.6); b.material.color.copy(browC); });
+    const beard=L.beard||'nenhuma'; m.beard.visible = beard!=='nenhuma';
+    if(m.beard.visible){ let mouthY=eyeY-.07, bestZ=-1e9; const hz=J.head.z;
+      for(let v=0;v<m.n;v++){ if(m.dom[v]!==2) continue; const x=P[v*3], y=Y(v), z=P[v*3+2]; if(Math.abs(x)<.005 && y<eyeY-.052 && y>eyeY-.1 && z>bestZ){ bestZ=z; mouthY=y; } }
+      const cond = beard==='bigode'
+        ? v=>dom(v)===2 && P[v*3+2]>faceZ-.015 && Y(v)>mouthY+.004 && Y(v)<mouthY+.019 && Math.abs(P[v*3])<.032
+        : v=>{ if(dom(v)!==2) return false; const x=P[v*3], y=Y(v), z=P[v*3+2]; if(y<mouthY-.06 || z<hz-.004) return false; const ax=Math.abs(x); if(y<mouthY-.035 && z<hz+.03) return false;
+            const cheekTop = eyeY-.058 + .02*Math.min(1,ax/.06); if(y>cheekTop && !(y>mouthY+.004 && y<mouthY+.017 && ax<.03)) return false;
+            if(ax<.03 && y>mouthY-.011 && y<mouthY+.004 && z>faceZ-.025) return false; return true; };
+      const g=shellGeo(cond, v=>(beard==='cheia'?.0032:.0016)+(beard==='cheia'?.0008*noise3(P[v*3],P[v*3+1],P[v*3+2]):0), J.neck);
+      setGeo(m.beard,g); m.beard.material.color.copy(hexLin(shade(L.hair.color,.04))); m.beard.material.roughness=.95; }
+    // ----- acessórios (presos à cabeça e ao punho)
+    const A=L.acc||{}, hd=J.head.clone().sub(J.neck), top=J.headTop.clone().sub(J.neck), hr=top.y-hd.y, hw=Math.abs(J.eyeL.x-J.eyeR.x)*1.32, ez=faceZ-J.neck.z, ey=eyeY-J.neck.y;
+    m.cap.visible=!!A.bone; m.visor.visible=!!A.viseira && !A.bone; m.band.visible=!!A.faixa && !A.bone; m.glasses.visible=!!A.oculos; m.watch.visible=!!A.relogio;
+    const accC=hexLin(A.cor||'#1F4D3B');
+    if(m.cap.visible){ m.cap.position.set(0, ey+.026, hd.z-.012); m.cap.scale.set(hw*1.08, hr*.6, hw*1.2); m.cap.rotation.x=.14; m.cap.children.forEach(c=>c.material.color.copy(accC)); m.cap.children[1].material.color.copy(hexLin(shade(A.cor||'#1F4D3B',-.2))); }
+    if(m.visor.visible){ m.visor.position.set(0, ey+.042, hd.z-.01); m.visor.scale.set(hw*1.12, hr*.62, hw*1.26); m.visor.children.forEach(c=>c.material.color.copy(accC)); }
+    if(m.band.visible){ m.band.position.set(0, ey+.045, hd.z-.008); m.band.scale.set(hw*.98, hw*.85, hw*1.16); m.band.material.color.copy(accC); }
+    if(m.glasses.visible){ m.glasses.position.set(0, ey+.004, hd.z-.008); m.glasses.scale.set(hw*1.04, 1, hw*1.2); }
+  }
+  function shade(hex,amt){ const c=new THREE.Color(hex); const hsl={}; c.getHSL(hsl); c.setHSL(hsl.h,hsl.s,clamp(hsl.l+amt,0,1)); return '#'+c.getHexString(); }
+  function buildHairStyle(J,L){
+    const m=MH, P=m.geo.attributes.position.array, style=L.hair.style, col=hexLin(L.hair.color);
+    [m.shell,m.tail,m.bun2,m.curtain,m.braids[0],m.braids[1]].forEach(o=>{ o.visible=false; });
+    m.hairMat.color.copy(col); m.tie.material.color.copy(hexLin(L.hair.tie||'#FFC928'));
+    if(style==='careca') return;
+    const eyeY=(J.eyeL.y+J.eyeR.y)/2, top=J.headTop.y, faceZ=(J.eyeL.z+J.eyeR.z)/2, hz=J.head.z, nk=J.neck;
+    const sm=(a,b,x)=>{ const u=clamp((x-a)/(b-a),0,1); return u*u*(3-2*u); };
+    const capOn = !!(L.acc&&L.acc.bone);
+    const S0={raspado:[.0018,.003,0], curto:[.004,.014,0], cacheado:[.008,.022,.006], afro:[.03,.06,.012], rabo:[.003,.011,0], coque:[.003,.011,0], longo:[.004,.013,0], trancas:[.003,.01,0]}[style]||[.004,.012,0];
+    const S = capOn? [Math.min(S0[0],.003),Math.min(S0[1],.004),0] : S0;
+    const shortCut = style==='raspado'||style==='curto'||style==='cacheado';
+    const cond=v=>{ if(m.dom[v]!==2) return false; const x=P[v*3],y=P[v*3+1],z=P[v*3+2]; if(y<nk.y+.03) return false;
+      const zr=(z-hz)/Math.max(.02,faceZ-hz), ax=clamp(Math.abs(x)/.065,0,1);
+      const front=eyeY+(style==='afro'?.055:.066)-.026*ax*ax, side=eyeY+(shortCut?.02:.008), back=nk.y+(style==='afro'?.03:shortCut?.07:.055);
+      let thr = zr>0 ? side+(front-side)*sm(.35,.75,zr) : side+(back-side)*sm(0,-.7,zr);
+      if(Math.abs(x)>.062 && zr>.15 && zr<.45 && style!=='afro') thr=Math.max(thr, eyeY+.012);
+      return y>thr; };
+    const off=v=>{ const y=P[v*3+1]; return S[0]+(S[1]-S[0])*clamp((y-eyeY-.03)/(top-eyeY-.03),0,1) + (S[2]? S[2]*(.6+.4*noise3(P[v*3],y,P[v*3+2])) : 0); };
+    setGeo(m.shell, shellGeo(cond, off, nk)); m.shell.visible=true;
+    const hd=J.head.clone().sub(nk), tp=J.headTop.clone().sub(nk), hr=tp.y-hd.y;
+    let bz=1e9; const by=J.head.y+.55*(top-J.head.y);
+    for(let v=0;v<m.n;v++){ if(m.dom[v]!==2) continue; const y=P[v*3+1]; if(Math.abs(P[v*3])<.025 && Math.abs(y-by)<.02 && P[v*3+2]<bz) bz=P[v*3+2]; }
+    if(bz>1e8) bz=hz-.09;
+    if(style==='rabo'){
+      m.tail.visible=true; m.tail.position.set(0, by-nk.y, bz-nk.z-.012);
+      setGeo(m.tailMesh, tube([new THREE.Vector3(0,0,0),new THREE.Vector3(0,-.045,-.05),new THREE.Vector3(0,-.13,-.07),new THREE.Vector3(0,-.22,-.055),new THREE.Vector3(0,-.29,-.035)], u=>.012+.024*Math.sin(Math.PI*Math.min(1,u*1.25+.12))*(1-u*.55)));
+      m.tie.position.set(0,-.004,-.006); m.tie.rotation.x=Math.PI/2-.7; m.tie.visible=true;
+    }
+    if(style==='coque'){ m.bun2.visible=true; m.bun2.position.set(0, hd.y+hr*.92, bz-nk.z+hr*.05); m.bun2.scale.setScalar(hr*.34); }
+    if(style==='longo'){ m.curtain.visible=true; const R0=Math.abs(J.eyeL.x-J.eyeR.x)*1.36, y0=hd.y+hr*.7, y1=(J.shL.y+J.shR.y)/2-nk.y-.13;
+      const RR=34, SS=40, pos=[], idx=[];
+      for(let i=0;i<=RR;i++){ const u=i/RR, y=y0+(y1-y0)*u;
+        const rad=R0*(u<.35? 1+.06*Math.sin(u/.35*Math.PI/2) : 1.06+.32*((u-.35)/.65)**1.2);
+        const lift = .012*Math.sin(u*Math.PI);
+        for(let j=0;j<=SS;j++){ const v=j/SS, th=Math.PI*(.5+v); const edge=Math.sin(v*Math.PI); const rr=rad*(.9+.1*edge) + lift*edge;
+          pos.push(Math.sin(th)*rr, y - (1-edge)*.015*u, hd.z-.008+Math.cos(th)*rr*1.12); } }
+      for(let i=0;i<RR;i++) for(let j=0;j<SS;j++){ const a=i*(SS+1)+j, b=a+SS+1; idx.push(a,a+1,b,b,a+1,b+1); }
+      const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.setIndex(idx); g.computeVertexNormals(); setGeo(m.curtain,g); }
+    if(style==='trancas'){ [1,-1].forEach((s,i)=>{ const b=m.braids[i]; b.visible=true; const sx=s*Math.abs(J.eyeL.x)*1.9;
+      setGeo(b, tube([new THREE.Vector3(sx,hd.y-hr*.05,hd.z-hr*.45),new THREE.Vector3(sx*1.05,hd.y-hr*.5,hd.z-hr*.55),new THREE.Vector3(sx*1.1,hd.y-hr*1.2,hd.z-hr*.45),new THREE.Vector3(sx*1.1,hd.y-hr*1.9,hd.z-hr*.3)], u=>(.014+.004*Math.sin(u*Math.PI*14))*(1-u*.35), 48, 10, .9)); }); }
+  }
+
   function mhApply(B){
     const m=MH, r=R, w=mhWeights(B), p=m.geo.attributes.position.array, base=m.base;
     p.set(base);
@@ -2110,25 +2386,11 @@ const STAGE = (()=>{
       for(let j=0;j<ii.length;j++){ const o=ii[j]*3, q=j*3; p[o]+=dd[q]*1e-4*wk; p[o+1]+=dd[q+1]*1e-4*wk; p[o+2]+=dd[q+2]*1e-4*wk; } }
     let minY=1e9,maxY=-1e9; for(let i=1;i<p.length;i+=3){ if(p[i]<minY) minY=p[i]; if(p[i]>maxY) maxY=p[i]; }
     for(let i=1;i<p.length;i+=3) p[i]-=minY;
-    m.geo.attributes.position.needsUpdate=true; m.geo.computeVertexNormals();
     r.mhScale = 1.75/(maxY-minY);
     const J={}; for(const key in m.joints){ const jj=m.joints[key]; const v=jj.p.slice(); for(let k=0;k<20;k++){ if(w[k]) for(let c=0;c<3;c++) v[c]+=jj.d[k][c]*w[k]; } v[1]-=minY; J[key]=V3(v); }
-    // cores: short, top (feminino) e tênis
-    const fem=B.s>=.5, c=m.geo.attributes.color.array, P=m.geo.attributes.position.array;
-    const skin=new THREE.Color(SKIN_HEX), cloth=new THREE.Color(CLOTH_HEX), shoe=new THREE.Color(SHOE_HEX);
-    const hipY=(J.hipL.y+J.hipR.y)/2, kneeY=(J.kneeL.y+J.kneeR.y)/2, shY=(J.shL.y+J.shR.y)/2;
-    const N=m.geo.attributes.normal.array, IDX=m.geo.index.array, SI=m.geo.attributes.skinIndex.array, SW=m.geo.attributes.skinWeight.array;
-    const shell=(mesh,cond,off)=>{ const map=new Int32Array(m.n).fill(-1), pos=[], si=[], sw=[], ind=[];
-      for(let t=0;t<IDX.length;t+=3){ const a=IDX[t],b=IDX[t+1],cc=IDX[t+2]; if(!(cond(a)&&cond(b)&&cond(cc))) continue;
-        for(const v of [a,b,cc]) if(map[v]<0){ map[v]=pos.length/3; pos.push(P[v*3]+N[v*3]*off, P[v*3+1]+N[v*3+1]*off, P[v*3+2]+N[v*3+2]*off); for(let q=0;q<4;q++){ si.push(SI[v*4+q]); sw.push(SW[v*4+q]); } }
-        ind.push(map[a],map[b],map[cc]); }
-      const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3)); g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(si,4)); g.setAttribute('skinWeight',new THREE.Float32BufferAttribute(sw,4)); g.setIndex(ind); g.computeVertexNormals();
-      mesh.geometry.dispose(); mesh.geometry=g; };
-    const isShorts=v=>{ const dp=m.dom[v], y=P[v*3+1]; return (dp===0 && y<hipY+.09) || ((dp===9||dp===12) && y>kneeY+.52*(hipY-kneeY)); };
-    const isTop=v=>{ const dp=m.dom[v], y=P[v*3+1]; return (dp===1||dp===0) && y>shY-.25 && y<shY-.035; };
-    const isShoe=v=>{ const dp=m.dom[v], y=P[v*3+1]; return (dp===11||dp===14) && y<(J.ankleL.y+J.ankleR.y)/2+.025; };
-    shell(m.shorts,isShorts,.0045); shell(m.shoes,isShoe,.004);
-    if(fem) shell(m.top,isTop,.004); m.top.visible=fem;
+    deformBody(J, lookOf());
+    m.geo.attributes.position.needsUpdate=true; m.geo.computeVertexNormals();
+    const fem=B.s>=.5;
     // rig na pose de ligação
     const hipsW=J.hipL.clone().add(J.hipR).multiplyScalar(.5);
     r.hips.position.copy(hipsW); r.hips.quaternion.identity(); r.hipY=hipsW.y;
@@ -2152,23 +2414,29 @@ const STAGE = (()=>{
       r.hp[i].position.copy(J['hip'+s].clone().sub(hipsW));
       chain(r.hp[i],r.kn[i],r.an[i],J['hip'+s],J['knee'+s],J['ankle'+s],null,I);
     });
-    r.L1=J.hipL.distanceTo(J.kneeL); r.L2=J.kneeL.distanceTo(J.ankleL); r.ankY=(J.ankleL.y+J.ankleR.y)/2;
+    r.L1=J.hipL.distanceTo(J.kneeL); r.L2=J.kneeL.distanceTo(J.ankleL); r.ankY=(J.ankleL.y+J.ankleR.y)/2; r.headY=(J.eyeL.y+J.headTop.y)/2;
     // olhos e cabelo (presos ao pescoço)
     [J.eyeL,J.eyeR].forEach((e,i)=>{ m.eyes[i].position.copy(e.clone().sub(J.neck)); });
     const hd=J.head.clone().sub(J.neck), top=J.headTop.clone().sub(J.neck), hr=(top.y-hd.y);
-    m.cap.visible=false; m.bun.visible=false;
-    m.shell.visible=fem; m.tail.visible=fem;
-    if(fem) buildHair(J);
+    r.neck.scale.setScalar(1);
+    buildLook(J);
     r.root.updateMatrixWorld(true);
     m.mesh.bind(m.skeleton);
-    [m.shorts,m.shoes,m.top].forEach(x=>{ if(x && x.geometry.attributes.position) x.bind(m.skeleton, m.mesh.bindMatrix); });
+    [m.bottom,m.shoes,m.sole,m.top].forEach(x=>{ if(x && x.geometry.attributes.position && x.geometry.attributes.position.count) x.bind(m.skeleton, m.mesh.bindMatrix); });
+    if(!ready){ ready=true; requestAnimationFrame(()=>requestAnimationFrame(()=>wrap.classList.add('ready'))); }
   }
 
   function linearize(obj){ obj.traverse(o=>{ const ms=o.material? (Array.isArray(o.material)?o.material:[o.material]):[]; ms.forEach(m=>{ if(m.userData.lin) return; m.userData.lin=1; if(m.color) m.color.convertSRGBToLinear(); if(m.emissive) m.emissive.convertSRGBToLinear(); }); }); }
   function applyTint(){ if(!R) return; R.markers.forEach(m=>{ m.visible = injuries.includes(m.userData.name); }); }
 
   function resize(){ if(!R) return; const w=wrap.clientWidth||1, h=wrap.clientHeight||1; R.renderer.setSize(w,h,false); R.camera.aspect=w/h;
-    const narrow = w/h < .85; if(zoomed){ R.camera.position.set(0, 1.2, narrow? 5.6 : 4.9); R.camera.lookAt(0, narrow? .8 : .86, 0); } else { R.camera.position.set(0, narrow? 1.5 : 1.55, narrow? 7.2 : 6.2); R.camera.lookAt(0, narrow? .78 : .85, 0); } R.camera.updateProjectionMatrix(); }
+    R.camera.updateProjectionMatrix(); camTarget(); }
+  function camTarget(){ if(!R) return; const w=wrap.clientWidth||1, h=wrap.clientHeight||1, narrow=w/h<.85; let p,l;
+    if(zoomed==='face'){ const hy=(R.headY||1.5)*(R.root.scale.y||1)*1.07; p=new THREE.Vector3(0,hy+.07,narrow?1.08:.92); l=new THREE.Vector3(0,hy+.035,0); }
+    else if(zoomed){ p=new THREE.Vector3(0,1.2,narrow?5.6:4.7); l=new THREE.Vector3(0,narrow?.8:.88,0); }
+    else { p=new THREE.Vector3(0,narrow?1.5:1.55,narrow?7.2:6.2); l=new THREE.Vector3(0,narrow?.78:.85,0); }
+    if(!R.camT){ R.camera.position.copy(p); R.camLook=l.clone(); R.camera.lookAt(l); }
+    R.camT={p,l}; }
 
   // cinemática inversa de 2 ossos no plano sagital (y para cima, z para frente)
   function ik(ty,tz,L1,L2){ let d=Math.hypot(ty,tz); d=Math.min(Math.max(d,.05),L1+L2-1e-3);
@@ -2177,7 +2445,7 @@ const STAGE = (()=>{
   const ease = x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
   const lerp=(a,b,x)=>a+(b-a)*x;
 
-  function reset(){ const r=R; r.hips.position.set(0,r.hipY||.95,0); r.hips.rotation.set(0,0,0); r.torso.rotation.set(0,0,0); r.neck.rotation.set(0,0,0);
+  function reset(){ const r=R; if(MH) r.neck.scale.setScalar(1.07); r.hips.position.set(0,r.hipY||.95,0); r.hips.rotation.set(0,0,0); r.torso.rotation.set(0,0,0); r.neck.rotation.set(0,0,0);
     [r.sh,r.el,r.wr,r.hp,r.kn,r.an].forEach(a=>a.forEach(g=>g.rotation.set(0,0,0)));
     r.sh[0].rotation.z=.12; r.sh[1].rotation.z=-.12;
     r.bike.visible=false; r.racket.visible=false; r.ball.visible=false; r.target.visible=false; r.water.visible=false; }
@@ -2222,8 +2490,9 @@ const STAGE = (()=>{
     const speed = reduce? 0 : 1;
     t += dt*speed;
     if(modes.length>1 && !reduce){ modeT+=dt; if(modeT>4.2){ modeT=0; modeIdx=(modeIdx+1)%modes.length; setMode(modes[modeIdx]); if(altSex) bodyT.s = bodyT.s>.5?0:1; } }
-    if(!dragging) spin += dt*.32*speed;
+    if(!dragging) spin += dt*(zoomed==='face'?.18:.32)*speed;
     R.root.rotation.y = spin + drag;
+    if(R.camT){ if(zoomed==='face') camTarget(); const kk=reduce?1:Math.min(1,dt*3.2); R.camera.position.lerp(R.camT.p,kk); R.camLook.lerp(R.camT.l,kk); R.camera.lookAt(R.camLook); }
     const mk = reduce? 1 : Math.min(1, dt*2.5); ['k','f','d','s','w','mu'].forEach(x=>{ bodyC[x]+= (bodyT[x]-bodyC[x])*mk; }); rebuildBody();
     pop = Math.min(1, pop + dt*3.5); const sc = (.9 + .1*ease(pop))*bodyC.k*(MH?(R.mhScale||1):1); R.root.scale.set(sc,sc,sc);
     reset(); (POSES[curMode]||POSES.idle)(t);
@@ -2241,8 +2510,9 @@ const STAGE = (()=>{
   return {
     mount(slot){ if(!slot) return; if(wrap.parentNode!==slot) slot.appendChild(wrap); if(!ok) return; if(!R) build(); resize(); if(!raf){ last=performance.now(); raf=requestAnimationFrame(loop); } },
     setBody(b){ if(b) bodyT=bodyParams(b); },
+    setLook(L){ const k=JSON.stringify(L||null); if(k===lookKey) return; lookKey=k; LOOK=L? JSON.parse(k) : null; if(R) R.built=null; },
     set({modes:ms, injuries:inj, num, tag, read, body, alternateSex, zoom}){
-      altSex=!!alternateSex; if(!!zoom!==zoomed){ zoomed=!!zoom; resize(); }
+      altSex=!!alternateSex; const zz = zoom==='face'?'face':!!zoom; if(zz!==zoomed){ zoomed=zz; resize(); }
       if(body){ bodyT=bodyParams(body); if(firstBody){ Object.assign(bodyC,bodyT); firstBody=false; } }
       if(ms){ const key=ms.join(','); if(key!==modes.join(',')){ modes=ms; modeIdx=0; modeT=0; setMode(ms[0]); } }
       injuries = inj||[]; applyTint();
@@ -2262,7 +2532,7 @@ function stageCorpo(){
   const P=state.profile, kg=avatarKg(avatarView);
   const prog = avatarView==='inicio'?0: avatarView==='meta'?1: progFrac();
   const b=bmiOf(kg,P.altura), lbl={inicio:'Início',agora:'Agora',meta:'Meta'}[avatarView];
-  return {modes:['idle'], injuries:[], zoom:true, body:{cm:P.altura,kg,prog,sex:P.sexo}, num:`${nf(kg)}<small>kg</small>`, tag:`Seu avatar · ${lbl}${bodyLine(P.altura,kg)}`, read:[['IMC',b?nf(b):'—'],['Faixa',b?bmiClass(b)[2].replace('Obesidade','Obes.'):'—'],['Treinos',Math.round(prog*100)+'%'],['Altura',P.altura+' cm']]};
+  return {modes:['idle'], injuries:[], zoom:true, body:{cm:P.altura,kg,prog,sex:avSex(P)}, num:`${nf(kg)}<small>kg</small>`, tag:`Seu avatar · ${lbl}${bodyLine(P.altura,kg)}`, read:[['IMC',b?nf(b):'—'],['Faixa',b?bmiClass(b)[2].replace('Obesidade','Obes.'):'—'],['Treinos',Math.round(prog*100)+'%'],['Altura',P.altura+' cm']]};
 }
 function stageHoje(){
   const p=getPlan(), P=state.profile, dx=p.dx, tipo=P.evento.tipo;
@@ -2275,11 +2545,11 @@ function stageHoje(){
   let tot=0,dn=0; Object.entries(wk.days).forEach(([dw,s])=>{ if(s[0]!=='rest'&&s[0]!=='race'){tot++; if(state.done[doneKey(wk.i,dw)]) dn++;} });
   const num = evDate? (dr>0? `${dr}<small>dias</small>` : dr===0? 'HOJE' : 'FIM') : `${String(wi+1).padStart(2,'0')}<small>/${dx.W}</small>`;
   const tag = `${esc(P.evento.nomeProva||p.fam.n)}<br>${evDate?fmt(evDate,{day:'2-digit',month:'short',year:'numeric'}):'ciclo de '+dx.W+' semanas'}`+(ck==='vermelho'?'<br><i>recuperação baixa</i>':'');
-  return {modes, injuries:P.saude.lesoes||[], body:{cm:P.altura,kg:currentKg(),prog:progFrac(),sex:P.sexo}, num, tag:tag+bodyLine(P.altura,currentKg()), read:[['Semana',`${wi+1}/${dx.W}`],['Fase',PH_N[wk.ph]],['Feitos',`${dn}/${tot}`],['Hoje',t?(CHIP[t.s[0]]||'—'):'Livre']]};
+  return {modes, injuries:P.saude.lesoes||[], body:{cm:P.altura,kg:currentKg(),prog:progFrac(),sex:avSex(P)}, num, tag:tag+bodyLine(P.altura,currentKg()), read:[['Semana',`${wi+1}/${dx.W}`],['Fase',PH_N[wk.ph]],['Feitos',`${dn}/${tot}`],['Hoje',t?(CHIP[t.s[0]]||'—'):'Livre']]};
 }
 function stagePerfil(){
   const p=getPlan(), P=state.profile, dx=p.dx, {e}=evInfo(P), inj=P.saude.lesoes||[];
-  return {modes: SPORT_MODES[P.evento.tipo]||(P.evento.dist==='forca'?['gym']:['walk']), injuries:inj, body:{cm:P.altura,kg:currentKg(),prog:progFrac(),sex:P.sexo}, num:`${dx.score}<small>/100</small>`,
+  return {modes: SPORT_MODES[P.evento.tipo]||(P.evento.dist==='forca'?['gym']:['walk']), injuries:inj, body:{cm:P.altura,kg:currentKg(),prog:progFrac(),sex:avSex(P)}, num:`${dx.score}<small>/100</small>`,
     tag:`Prontidão<br>${esc(e.n)}`+bodyLine(P.altura,currentKg())+(inj.length?`<br><i>Atenção: ${inj.join(', ').toLowerCase()}</i>`:''),
     read:[['Nível',dx.L+'/4'],['Semanas',dx.W],['IMC',dx.bmi?nf(dx.bmi):'—'],['FC máx',dx.fcmax]]};
 }
@@ -2435,6 +2705,7 @@ function render(){
   let html;
   if(inWiz){ if(!draft){ draft=state.profile?JSON.parse(JSON.stringify(state.profile)):emptyProfile(); } fixDraft(draft); html=viewWizard(); }
   else if(!hasProfile) html=viewLanding();
+  else if(route==='avatar') html=viewAvatar();
   else html=({hoje:viewHoje,treino:viewTreino,nutricao:viewNutricao,corpo:viewCorpo,prova:viewProva,perfil:viewPerfil}[route]||viewHoje)();
   const keep={}; ['w-kg','w-date','e-date'].forEach(id=>{const el=document.getElementById(id); if(el) keep[id]=el.value;});
   app.innerHTML=html;
@@ -2442,7 +2713,9 @@ function render(){
   const slot=document.getElementById('stage-slot');
   if(slot){
     STAGE.mount(slot);
+    STAGE.setLook(currentLook());
     if(inWiz) STAGE.set(stageFor(draft,wizStep));
+    else if(hasProfile && route==='avatar') STAGE.set(stageAvatar());
     else if(hasProfile && route==='perfil') STAGE.set(stagePerfil());
     else if(hasProfile && route==='corpo') STAGE.set(stageCorpo());
     else if(hasProfile) STAGE.set(stageHoje());
@@ -2451,7 +2724,7 @@ function render(){
 }
 function onRoute(){
   const h=location.hash.replace('#','');
-  const nr = h==='diagnostico' ? 'diagnostico' : VIEWS[h]? h : 'hoje';
+  const nr = h==='diagnostico' ? 'diagnostico' : h==='avatar' ? 'avatar' : VIEWS[h]? h : 'hoje';
   if(nr!==route){ route=nr; pendingDel=null; pendingExamDel=null; confirmReset=false; window.scrollTo(0,0); }
   render();
 }
@@ -2513,6 +2786,18 @@ document.addEventListener('click',e=>{
   if(ds.avatar){ avatarView=ds.avatar; return render(); }
   if(ds.photodel){ if(pendingPhotoDel===ds.photodel){ const k=ds.photodel; pendingPhotoDel=null; savePhoto(k,null); return; } pendingPhotoDel=ds.photodel; return render(); }
   if(ds.mealdel){ if(pendingMealDel){ pendingMealDel=false; state.mealPlan=null; upMsg.meal=''; return commit(); } pendingMealDel=true; return render(); }
+  if(ds.avopen){ openAvatar(ds.avopen); return; }
+  if(route==='avatar' && avDraft){
+    if(ds.avtab){ avTab=ds.avtab; return render(); }
+    if(ds.av){ const v = ds.av==='skin'? +ds.v : ds.v; const ks=ds.av.split('.'); let o=avDraft; ks.slice(0,-1).forEach(k=>{ o[k]=o[k]||{}; o=o[k]; }); o[ks.at(-1)]=v;
+      if(ds.av==='sex'){ if(v==='m' && avDraft.top.style==='top') avDraft.top.style='regata'; if(v==='f' && avDraft.beard!=='nenhuma') avDraft.beard='nenhuma'; }
+      return render(); }
+    if(ds.avt){ const k=ds.avt.split('.')[1]; avDraft.acc=avDraft.acc||{}; avDraft.acc[k]=!avDraft.acc[k]; if(k==='bone'&&avDraft.acc.bone){ avDraft.acc.viseira=false; avDraft.acc.faixa=false; } if((k==='viseira'||k==='faixa')&&avDraft.acc[k]) avDraft.acc.bone=false; return render(); }
+    if(ds.avpose){ avPose=ds.avpose; return render(); }
+    if(ds.avrand){ avDraft=randomAvatar(); return render(); }
+    if(ds.avcancel){ avDraft=null; location.hash=avReturn||'perfil'; return; }
+    if(ds.avsave){ state.avatar=JSON.parse(JSON.stringify(avDraft)); avDraft=null; const back=avReturn||'perfil'; avFirst=false; location.hash=back; return commit(); }
+  }
   if(ds.startnow){ state.planStart=iso(mondayOf(TODAY)); state.startDay=iso(TODAY); PLAN=null; selWeek=null; return commit(); }
   if(ds.redo==='edit'){ draft=JSON.parse(JSON.stringify(state.profile)); wizStep=0; location.hash='diagnostico'; return; }
   if(ds.redo==='ask'){ confirmReset=true; return render(); }
@@ -2528,6 +2813,7 @@ document.addEventListener('input',e=>{
     if(el.dataset.path==='peso'||el.dataset.path==='altura'){ STAGE.setBody({cm:draft.altura||175, kg:draft.peso||(draft.altura?22.5*(draft.altura/100)**2:72), prog:0, sex:draft.sexo}); }
     return;
   }
+  if(el.dataset.avr && avDraft){ const ks=el.dataset.avr.split('.'); avDraft[ks[0]]=avDraft[ks[0]]||{}; avDraft[ks[0]][ks[1]]=(+el.value)/100; STAGE.setLook(avDraft); return; }
   if(el.id==='ph-cut'){ el.closest('.ph-compare').style.setProperty('--cut', el.value+'%'); return; }
   if(el.dataset.race){
     state.race[el.dataset.race]=+el.value;
