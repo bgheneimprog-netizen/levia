@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="levia: diagnóstico completo e plano de treino, nutrição e saúde até a sua prova — corrida, triathlon, duathlon, HYROX, ciclismo, natação, raquete ou emagrecimento.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="levia">
 <meta name="theme-color" content="#3E8B6C">
 <meta property="og:title" content="levia.">
 <meta property="og:description" content="Da inscrição à linha de chegada: diagnóstico e plano de treino personalizado.">
@@ -582,6 +586,62 @@ ul.clean li::before{content:"";flex:0 0 7px;height:7px;border-radius:50%;backgro
   .soc-tabs{width:100%}.soc-tabs button{flex:1}
   .food-tot{margin-left:0;width:100%;text-align:center}
 }
+
+/* Tamanho dos bichinhos: discretos no painel, maiores só no criador */
+.stage{--crmax:290px}
+.cr{max-height:var(--crmax)}
+.av-stage .stage{--crmax:430px}
+.land-stage .stage,.login-stage .stage{--crmax:360px}
+.stage .spark{display:none}
+.av-stage .stage .spark{display:block}
+.stage.zoom .cr{transform:scale(1.25);transform-origin:50% 26%}
+.stage-num{font-size:72px}
+.panel-num{font-size:clamp(48px,8vw,80px)}
+/* Sua semana */
+.week-grid{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center}
+.week-ring{position:relative;width:112px;height:112px}
+.week-ring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.week-ring b{font-family:var(--display);font-size:34px;line-height:1}
+.week-ring b small{font-size:16px;color:var(--muted)}
+.week-ring span{font-size:11px;color:var(--muted);max-width:70px;line-height:1.2}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{background:var(--surface-2);border-radius:14px;padding:10px 12px;min-width:0}
+.kpi span{display:block;font:700 10px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.kpi b{display:block;font-family:var(--display);font-size:26px;line-height:1.15;white-space:nowrap}
+.kpi b i{font-style:normal;font-size:13px;color:var(--muted);font-family:var(--body);font-weight:600}
+.kpi b.ok{color:var(--ok)}.kpi b.bad{color:var(--bad)}
+.kpi small{font-size:11.5px;color:var(--muted)}
+.kpi .bar{height:5px;border-radius:9px;background:#DCE8E1;margin-top:5px;overflow:hidden}
+.kpi .bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#52A383,#EC6A9C)}
+@media (max-width:760px){.week-grid{grid-template-columns:minmax(0,1fr);justify-items:center}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}}
+/* Constância */
+.heat-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;overflow-x:auto}
+.heat-days{display:grid;grid-template-rows:14px repeat(7,15px);font-size:10px;line-height:15px;color:var(--muted);gap:4px}
+.heat-days span{font-size:9.5px}
+.heat-m{display:grid;font-size:10px;color:var(--muted);height:14px;margin-bottom:3px;text-transform:lowercase}
+.heat-g{display:grid;grid-template-rows:repeat(7,15px);gap:4px}
+.heat-m{gap:4px}
+.heat-g i,.heat-leg i{display:block;border-radius:4px;width:15px;height:15px}
+.l0{background:#E9EFEB}.l1{background:#C4E2D3}.l2{background:#86C3A6}.l3{background:#4E9E7E}.l4{background:#EC6A9C}.lf{background:transparent;border:1px dashed #E2EAE5}
+.heat-leg{display:flex;align-items:center;gap:4px;justify-content:flex-end;font-size:11px;color:var(--muted);margin-top:8px}
+.heat-leg i{width:12px;height:12px}
+/* Conquistas */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.badge{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:14px 10px;border-radius:16px;background:var(--surface-2);opacity:.55;filter:grayscale(1)}
+.badge.ok{opacity:1;filter:none;background:linear-gradient(160deg,#FDE8F0,#E3F1EA)}
+.bd-m{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:18px;color:#fff;background:linear-gradient(135deg,#52A383,#3E8B6C);box-shadow:0 0 0 4px #fff,0 6px 14px -6px rgba(24,58,44,.5)}
+.badge.ok .bd-m{background:linear-gradient(135deg,#F27BA8,#E85C93)}
+.badge b{font-size:13.5px}.badge small{font-size:11.5px;color:var(--muted);line-height:1.3}
+/* Cronômetro de descanso */
+.rt{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:2px 9px;font-size:12px;font-weight:700;color:var(--brand);margin-left:2px}
+.rt:hover{border-color:var(--brand)}
+#rest-timer{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:12px;background:#183A2C;color:#fff;padding:8px 10px 8px 12px;border-radius:999px;box-shadow:0 18px 40px -16px rgba(24,58,44,.7)}
+#rest-timer small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+#rest-timer b{font-family:var(--display);font-size:24px;line-height:1}
+#rest-timer button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:7px 11px;font-weight:700}
+#rest-timer .ring circle:first-child{stroke:rgba(255,255,255,.18)}
+#rest-timer.done{background:#E85C93}
+@media (max-width:760px){body.has-tabs #rest-timer{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
 
 /* Monte seu avatar */
 .av-wrap{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:22px;align-items:start}
@@ -1589,7 +1649,7 @@ function detailHTML(dt){
   const total = dt.blocks.reduce((a,b)=>a+(b.m||0),0);
   const pics = dt.blocks.some(b=>b.rows.some(r=>r[5]));
   return (dt.where?`<div class="sx-where">${esc(dt.where)}</div>`:'') + dt.blocks.map(b=>`<div class="sx-block"><div class="sx-bt"><span>${esc(b.t)}</span>${b.m?`<span class="num">${b.m} min</span>`:''}</div>
-    ${b.rows.map(r=>`<div class="sx-row ${r[5]?'has-pic':''}">${r[5]?`<span class="sx-pic" title="Posição inicial e final"><img src="ex/${r[5]}-relaxation.png" alt="" loading="lazy"><img class="b" src="ex/${r[5]}-tension.png" alt="${esc(r[0])}" loading="lazy"></span>`:''}<div><b>${esc(r[0])}</b>${r[4]?`<span class="nt">${esc(r[4])}</span>`:''}</div><div class="px num">${esc(r[1])}</div><div class="meta">${r[2]?`<span class="ld">${esc(r[2])}</span>`:''}${r[3]?`<span class="rs">descanso ${esc(r[3])}</span>`:''}</div></div>`).join('')}</div>`).join('')
+    ${b.rows.map(r=>`<div class="sx-row ${r[5]?'has-pic':''}">${r[5]?`<span class="sx-pic" title="Posição inicial e final"><img src="ex/${r[5]}-relaxation.png" alt="" loading="lazy"><img class="b" src="ex/${r[5]}-tension.png" alt="${esc(r[0])}" loading="lazy"></span>`:''}<div><b>${esc(r[0])}</b>${r[4]?`<span class="nt">${esc(r[4])}</span>`:''}</div><div class="px num">${esc(r[1])}</div><div class="meta">${r[2]?`<span class="ld">${esc(r[2])}</span>`:''}${r[3]?`<span class="rs">descanso ${esc(r[3])} <button type="button" class="rt" data-rest="${restSecs(r[3])}" aria-label="Iniciar descanso">⏱ iniciar</button></span>`:''}</div></div>`).join('')}</div>`).join('')
     + (pics?`<p class="sx-credit">Ilustrações: <a href="https://github.com/everkinetic/data" target="_blank" rel="noopener">Everkinetic</a> · CC BY-SA 4.0</p>`:'')
     + (dt.tip?`<div class="sx-tip">${esc(dt.tip)}</div>`:'') + (total?`<div class="small muted" style="margin-top:6px">Tempo total aproximado: <b class="num">${total} min</b></div>`:'');
 }
@@ -1801,6 +1861,7 @@ function viewHoje(){
         ${TODAY>=start?`<div><div class="row" style="justify-content:space-between;margin-bottom:6px"><span class="label">Semana ${wk.i+1} · ${PH_N[wk.ph]}${wk.rec?' (recuperação)':''}</span><span class="small num muted">${dn}/${tot} feitos</span></div><div class="bar"><i style="width:${tot?dn/tot*100:0}%"></i></div></div>`:''}
       </div>
     </div>
+    ${weekCard()}
     ${checkinCard()}
     ${t?`<div class="card"><div class="card-h"><h3>Treino de hoje</h3><span class="label">${esc(CHIP[t.s[0]]||'')}${t.s[3]?' · ~'+t.s[3]+' min':''}</span></div>${sessionCard(t.s,{key:doneKey(t.wi,t.dw),extra,open:true})}</div>`:''}
     <div class="card">
@@ -1847,6 +1908,7 @@ function viewTreino(){
   return `<div class="view">
     ${panel({kick:'Treino · '+esc(p.ev.n), num: String(w.i+1).padStart(2,'0')+'<small>/'+dx.W+'</small>', title: PH_N[w.ph]+(w.rec?' · recuperação':''), tag: fmt(w.start)+' – '+fmt(addDays(w.start,6))+'<br>só avance se a semana foi confortável', extra:`<div class="phases panel-phases">${strip_}</div>`, read:[['Concluídos',dn+'/'+tot],['Nesta semana',wkDn+'/'+wkTot],['Fase',PH_N[w.ph]],['FC máx',dx.fcmax+' bpm']]})}
     <div class="legend" style="margin-top:-6px">${['base','build','spec','taper'].map(k=>`<span><i class="ph-${k}"></i>${PH_N[k]}</span>`).join('')}<span><i class="ph-rec"></i>Recuperação</span></div>
+    ${heatCard()}
     <div class="card">
       <div class="wk-nav" style="margin-bottom:14px">
         <button class="btn icon" data-week="${Math.max(0,selWeek-1)}" aria-label="Semana anterior" ${selWeek===0?'disabled':''}>${ICONS.left}</button>
@@ -2048,6 +2110,8 @@ function viewPerfil(){
         <div class="bib-strip" style="margin:0 0 14px">${['base','build','spec','taper'].filter(k=>counts[k]).map(k=>`<div class="ph-${k}" style="flex:${counts[k]};color:var(--ink)">${PH_N[k].toUpperCase()} ${counts[k]}</div>`).join('')}</div>
         <ul class="clean">${dx.adjust.map(a=>`<li>${a}</li>`).join('')||'<li>Plano padrão para o seu nível, com recuperação a cada 4 semanas.</li>'}<li>Uma semana mais leve a cada 4, e ${d.taper?`${d.taper} semana${d.taper>1?'s':''} de polimento antes da prova`:'progressão contínua'}.</li></ul></div>
     <div class="callout"><p><b>Seu bichinho.</b> Troque de bicho, cores, roupa e acessórios quando quiser.</p><button type="button" class="btn sm primary" data-avopen="perfil">${state.avatar?'Editar avatar':'Montar avatar'}</button></div>
+    ${badgesCard()}
+    ${appCard()}
     <div class="card"><div class="card-h"><h3>Sua conta e seus dados</h3></div>
       ${sbUser?`<p>Conectada como <b>${esc(sbUser.email)}</b>. Entre com esse e-mail em qualquer aparelho e tudo aparece.</p><button class="btn sm" data-sologout="1" style="margin:6px 0 10px">Sair da conta</button>`: state.account&&state.account.email? `<p class="small muted">E-mail: <b>${esc(state.account.email)}</b></p>`:''}
       ${userCol?`<p>Seus dados estão salvos na conta <b>${esc(accountEmail||'Claude conectada')}</b>. Entre com esse e-mail em qualquer aparelho e tudo aparece: plano, treinos feitos, peso, exames, plano alimentar e fotos.</p><p class="small muted" style="margin-top:6px">Ficam numa área privada da sua conta: nem quem criou o app consegue ver.</p>`:`<p>Seus dados ficam salvos neste navegador, só para você.</p><p class="small muted" style="margin-top:6px">${window.claude?'Para salvar no seu e-mail e ver em qualquer aparelho, abra o app logado na sua conta Claude.':'Use sempre o mesmo aparelho e navegador. Limpar os dados do navegador apaga o seu progresso.'}</p>`}
@@ -2788,6 +2852,116 @@ document.addEventListener('change', async e=>{
   if(el.id==='ck-ph'){ const f=el.files&&el.files[0]; if(!f) return; ckVals={k:document.getElementById('ck-k').value, t:document.getElementById('ck-t').value, min:document.getElementById('ck-min').value, n:document.getElementById('ck-n').value}; try{ ckPhoto=await shrinkImage(f, 720, 150000); }catch(err){ ckMsg='Não foi possível abrir esta imagem.'; } render(); }
   if(el.id==='fd-ph'){ const l=document.getElementById('fd-phl'); if(l) l.textContent = el.files&&el.files[0]? 'Foto ✓' : 'Foto'; }
 });
+
+/* =====================================================================
+   CONSTÂNCIA, METAS, CONQUISTAS, CRONÔMETRO, APP INSTALÁVEL E EXPORTAÇÃO
+   ===================================================================== */
+function doneDate(key){ const p=getPlan(); if(!p) return null; const [wi,dw]=key.split('-').map(Number); const w=p.weeks[wi]; return w? addDays(w.start, WEEK_ORDER.indexOf(dw)) : null; }
+function activity(){
+  const m={}; const add=(d,min)=>{ if(!d) return; const k=iso(d); m[k]=(m[k]||0)+(min||30); };
+  const p=getPlan();
+  Object.keys(state.done||{}).forEach(k=>{ if(!state.done[k]) return; const d=doneDate(k); if(!d) return; const [wi,dw]=k.split('-').map(Number); const s=p&&p.weeks[wi]&&p.weeks[wi].days[dw]; add(d, s&&s[3]||30); });
+  (state.myCheckins||[]).forEach(c=>add(new Date(c.t), c.minutes||30));
+  return m;
+}
+const weekStartOf=d=>addDays(strip(d), -((d.getDay()+6)%7));
+function weekGoal(){ const P=state.profile; return Math.max(1, (P&&P.rotina&&P.rotina.dias&&P.rotina.dias.length)||3); }
+function weekStats(){
+  const act=activity(), goal=weekGoal(), ws=weekStartOf(TODAY);
+  const daysIn=(a,b)=>{ let n=0,min=0; for(let d=a; d<=b; d=addDays(d,1)){ const v=act[iso(d)]; if(v){ n++; min+=v; } } return {n,min}; };
+  const cur=daysIn(ws, addDays(ws,6));
+  let streak=0; for(let k=1;k<104;k++){ const a=addDays(ws,-7*k); if(daysIn(a,addDays(a,6)).n>=goal) streak++; else break; }
+  if(cur.n>=goal) streak++;
+  const kgNow=currentKg(); const w7=(state.weights||[]).filter(w=>fromIso(w.d)<=addDays(TODAY,-6)).slice(-1)[0];
+  return {cur, goal, streak, dKg: (kgNow&&w7)? kgNow-w7.kg : null, total:Object.keys(act).length, act};
+}
+function ring(v, max, size=96, stroke=10, color='var(--brand)'){
+  const r=(size-stroke)/2, c=2*Math.PI*r, f=Math.min(1, max? v/max : 0);
+  return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface-2)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${(c*f).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${size/2} ${size/2})"/></svg>`;
+}
+function weekCard(){
+  const s=weekStats(), log=dayLog(), dx=getPlan().dx, food=(state.food||{})[iso(TODAY)]||[];
+  const kcal=food.reduce((a,x)=>a+(+x.kcal||0),0), prot=Math.max(log.protein||0, food.reduce((a,x)=>a+(+x.prot||0),0));
+  return `<div class="card week"><div class="card-h"><h3>Sua semana</h3><span class="label">${fmt(weekStartOf(TODAY))} – ${fmt(addDays(weekStartOf(TODAY),6))}</span></div>
+    <div class="week-grid">
+      <div class="week-ring">${ring(s.cur.n, s.goal, 112, 11, 'url(#wg)')}<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52A383"/><stop offset="1" stop-color="#EC6A9C"/></linearGradient></defs></svg><div><b class="num">${s.cur.n}<small>/${s.goal}</small></b><span>dias de treino</span></div></div>
+      <div class="kpis">
+        <div class="kpi"><span>Sequência</span><b class="num">${s.streak}</b><small>${s.streak===1?'semana':'semanas'} na meta</small></div>
+        <div class="kpi"><span>Minutos</span><b class="num">${s.cur.min}</b><small>nesta semana</small></div>
+        <div class="kpi"><span>Proteína hoje</span><b class="num">${prot}<i>/${dx.protein} g</i></b><div class="bar"><i style="width:${Math.min(100,Math.round(prot/dx.protein*100))}%"></i></div></div>
+        <div class="kpi"><span>Peso em 7 dias</span><b class="num ${s.dKg==null?'':s.dKg<=0?'ok':'bad'}">${s.dKg==null?'—':(s.dKg>0?'+':'')+nf(s.dKg)}<i>${s.dKg==null?'':' kg'}</i></b><small>${kcal?kcal+' kcal hoje':'registre na Nutrição'}</small></div>
+      </div></div></div>`;
+}
+function heatCard(){
+  const s=weekStats(), weeks=15, start=addDays(weekStartOf(TODAY), -7*(weeks-1));
+  let cells=''; const months=[];
+  for(let w=0; w<weeks; w++){ const ws=addDays(start,7*w); if(ws.getDate()<=7) months.push([w, fmt(ws,{month:'short'})]);
+    for(let d=0; d<7; d++){ const day=addDays(ws,d), k=iso(day), v=s.act[k]||0, fut=day>TODAY; const lv= fut?'f': v===0?0 : v<30?1 : v<60?2 : v<90?3 : 4;
+      cells+=`<i class="l${lv}" style="grid-column:${w+1};grid-row:${d+1}" title="${fmt(day,{day:'numeric',month:'short'})}${v?' · '+v+' min':''}"></i>`; } }
+  return `<div class="card heat"><div class="card-h"><h3>Constância</h3><span class="label">${s.total} ${s.total===1?'dia ativo':'dias ativos'}</span></div>
+    <div class="heat-wrap"><div class="heat-days"><b></b><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span><span>sáb</span><span>dom</span></div>
+      <div><div class="heat-m" style="grid-template-columns:repeat(${weeks},15px)">${months.map(([w,l])=>`<span style="grid-column:${w+1}">${l}</span>`).join('')}</div><div class="heat-g" style="grid-template-columns:repeat(${weeks},15px)">${cells}</div></div></div>
+    <div class="heat-leg"><span>menos</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>mais</span></div></div>`;
+}
+const BADGES=[
+  ['first','Primeiro treino','Registre ou conclua 1 treino', s=>s.total>=1, '1'],
+  ['t10','10 treinos','10 dias ativos', s=>s.total>=10, '10'],
+  ['t25','25 treinos','25 dias ativos', s=>s.total>=25, '25'],
+  ['t50','50 treinos','50 dias ativos', s=>s.total>=50, '50'],
+  ['week','Semana completa','Bata a meta de dias em uma semana', s=>s.streak>=1, '✓'],
+  ['w4','Um mês firme','4 semanas seguidas na meta', s=>s.streak>=4, '4'],
+  ['photo','Treino com foto','Marque um treino com foto', ()=> (state.myCheckins||[]).some(c=>c.ph), '📷'],
+  ['food','Diário em dia','Anote o que comeu em 7 dias diferentes', ()=> Object.values(state.food||{}).filter(a=>a.length).length>=7, '7'],
+  ['scale','Na balança','Registre 4 pesagens', ()=> (state.weights||[]).length>=4, 'kg'],
+  ['loss','Primeiros resultados','Perca 2 kg desde o início', ()=>{ const a=startKg(), b=currentKg(); return a&&b&&a-b>=2; }, '-2'],
+  ['team','Em equipe','Entre em um grupo', ()=> social.groups && social.groups.length>0, '★']
+];
+function badgesCard(){
+  const s=weekStats(), got=BADGES.filter(b=>b[3](s)).length;
+  return `<div class="card"><div class="card-h"><h3>Conquistas</h3><span class="label">${got} de ${BADGES.length}</span></div>
+    <div class="badges">${BADGES.map(([k,n,d,f,g])=>{ const ok=f(s); return `<div class="badge ${ok?'ok':''}" title="${esc(d)}"><span class="bd-m">${g}</span><b>${n}</b><small>${ok?'Conquistada':esc(d)}</small></div>`; }).join('')}</div></div>`;
+}
+/* cronômetro de descanso */
+let restT=null;
+function restSecs(txt){ const t=String(txt||''); const m=t.match(/(\d+)\s*(?:[–-]\s*\d+\s*)?(min|s)/i); if(!m) return 60; return m[2].toLowerCase()==='min'? +m[1]*60 : +m[1]; }
+function restStart(sec){
+  clearInterval(restT&&restT.iv); let el=document.getElementById('rest-timer');
+  if(!el){ el=document.createElement('div'); el.id='rest-timer'; el.setAttribute('role','timer'); el.setAttribute('aria-live','polite'); document.body.appendChild(el); }
+  const end=Date.now()+sec*1000; restT={end, sec};
+  const draw=()=>{ const left=Math.max(0, Math.round((restT.end-Date.now())/1000)); const mm=Math.floor(left/60), ss=String(left%60).padStart(2,'0');
+    el.innerHTML=`<span class="rt-ring">${ring(left, restT.sec, 38, 4, '#EC6A9C')}</span><div><small>Descanso</small><b class="num">${mm}:${ss}</b></div><button data-restadd="15">+15 s</button><button data-reststop="1" aria-label="Parar">✕</button>`;
+    el.className = left===0? 'done' : '';
+    if(left===0){ clearInterval(restT.iv); try{ navigator.vibrate&&navigator.vibrate([200,100,200]); }catch(e){} setTimeout(()=>{ if(el.className==='done') el.remove(); }, 4000); } };
+  draw(); restT.iv=setInterval(draw, 250);
+}
+document.addEventListener('click', e=>{
+  const t=e.target.closest('[data-rest],[data-restadd],[data-reststop],[data-export],[data-install]'); if(!t) return;
+  if(t.dataset.rest){ restStart(+t.dataset.rest); return; }
+  if(t.dataset.restadd && restT){ restT.end+=15000; restT.sec+=15; return; }
+  if(t.dataset.reststop){ clearInterval(restT&&restT.iv); restT=null; const el=document.getElementById('rest-timer'); if(el) el.remove(); return; }
+  if(t.dataset.export){ exportData(t.dataset.export); return; }
+  if(t.dataset.install && installEvt){ installEvt.prompt(); installEvt.userChoice.finally(()=>{ installEvt=null; render(); }); }
+});
+/* exportar dados */
+async function exportData(kind){
+  let blob, name;
+  if(kind==='csv'){ const rows=[['data','peso_kg']].concat((state.weights||[]).map(w=>[w.d, w.kg])); const food=[]; Object.entries(state.food||{}).forEach(([d,a])=>a.forEach(x=>food.push([d, x.m, '"'+String(x.txt).replace(/"/g,'""')+'"', x.kcal||'', x.prot||''])));
+    const txt=rows.map(r=>r.join(',')).join('\n')+'\n\ndata,refeicao,descricao,kcal,proteina_g\n'+food.map(r=>r.join(',')).join('\n'); blob=new Blob(['﻿'+txt],{type:'text/csv'}); name='levia-peso-e-alimentacao.csv'; }
+  else { blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); name='levia-meus-dados.json'; }
+  try{ if(window.claude && typeof claude.use==='function'){ const dl=await claude.use('downloads'); if(dl){ await dl.save({filename:name, data:await blob.text()}); return; } } }catch(e){ return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+/* app instalável (site público) */
+let installEvt=null;
+const isStandalone=()=> (window.matchMedia&&matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); installEvt=e; if(route==='perfil') render(); });
+if('serviceWorker' in navigator && location.protocol==='https:' && !/claude|anthropic/.test(location.hostname)){ window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+function appCard(){
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  return `<div class="card"><div class="card-h"><h3>App e dados</h3></div>
+    ${isStandalone()? '<p class="small muted">Você está usando a levia como app. 🎉</p>' : installEvt? `<p class="small muted" style="margin-bottom:10px">Instale a levia na tela inicial: abre como app, em tela cheia.</p><button class="btn go" data-install="1">Instalar app</button>` : ios? `<p class="small muted">No iPhone: toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b> para usar a levia como app.</p>` : `<p class="small muted">No celular, abra o menu do navegador e escolha <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.</p>`}
+    <div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn sm" data-export="csv">Baixar peso e alimentação (planilha)</button><button class="btn sm" data-export="json">Baixar todos os meus dados</button></div></div>`;
+}
 
 /* =====================================================================
    RENDER
